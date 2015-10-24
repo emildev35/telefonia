@@ -1,0 +1,44 @@
+{% for llamada in llamadas %}
+<article id="comment-id-{{ llamada.id }}" class="comment-item row b-t-xs m-b-xs">
+    <strong class="col-md-1"></strong>
+    <span class="fa-stack fa-2x m-r-xs col-md-2">
+        {% ifequal llamada.tipo "I"  %}
+        <i class="fa fa-circle text-success fa-stack-2x"></i>
+        {% endifequal %}
+        {% ifequal llamada.tipo "O"  %}
+        <i class="fa fa-circle text-danger fa-stack-2x"></i>
+        {% endifequal %}
+        {% ifequal llamada.tipo "E"  %}
+        <i class="fa fa-circle text-info fa-stack-2x"></i>
+        {% endifequal %}
+        <i class="fa fa-phone text-white fa-stack-1x"></i>
+    </span>
+    <strong class="h3 m-r-xs col-md-2">{{ llamada.numero }}</strong>
+    <strong class="h3 m-r-xs col-md-2">{{ llamada.costo }}</strong>
+    <strong class="h3 m-r-xs col-md-2">{{ llamada.duracion }}</strong>
+    <strong class="h5 col-md-1"><time class="timeago" title="{{llamada.fecha }} {{llamada.hora}}" datetime="{{llamada.fecha }}T{{llamada.hora}}Z"></time></strong>
+    <div class="col-md-2">
+        {% ifequal llamada.registrado 'false'  %}
+        <div class="radio">
+            <label>
+                <input type="radio" href="#modal-llamada" name="tipo_{{llamada.id}}" onclick="registro({{ llamada.id }})" data-toggle="modal">
+                LLAMADA DE TIPO LABORAL
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" checked=true name="tipo_{{llamada.id}}" id="personal" /> 
+                LLAMADA DE TIPO PERSONAL
+            </label>
+        </div>
+        {% else %}
+    <strong>{{ llamada.descripcion }}</strong>
+        
+    {% endifequal %}
+    </div>
+</article>
+<hr />
+{% endfor %}
+{% if llamadas.has_next %}
+<a href="?page={{ llamadas.next_page_number }}">next</a>
+{% endif %}

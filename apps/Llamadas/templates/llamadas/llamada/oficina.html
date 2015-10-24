@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static "datedropper/datedropper.css" %}" type="text/css" >    
+{% endblock %}
+
+{% block titulo %} LLAMADAS OFICINA{% endblock %}
+
+
+{% block searchtool %}
+<!--<li class="dropdown hidden-xs">-->
+    <!--<a href="#" class="dropdown-toggle dker" data-toggle="dropdown"><i class="fa fa-fw fa-search"></i></a>-->
+    <!--<section class="dropdown-menu aside-xl animated fadeInUp">-->
+        <!--<section class="panel bg-white">-->
+            <!--<form role="search">-->
+                <!--<div class="form-group wrapper m-b-none">-->
+                    <!--<div class="input-group">-->
+                        <!--<input type="text" class="form-control" value="" placeholder="FUNCIONARIO">-->
+                        <!--<span class="input-group-btn">-->
+                            <!--<a onclick="filtrar()" class="btn btn-info btn-icon"><i class="fa fa-search"></i></a>-->
+                        <!--</span>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</form>-->
+        <!--</section>-->
+    <!--</section>-->
+<!--</li>-->
+{% endblock %}
+
+
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="{% url "home_home" %}"><i class="fa fa-home"></i>Home</a></li>
+        <li><a href="{% url "accounts_home" %}">Llamadas</a></li>
+        <li class="active">LLAMADAS DE OFICINAS</li>
+    </ul>
+    <div class="m-b-md">
+        <div class="row">
+            <div class="col-md-5">
+                <h3 class="m-b-none">USUARIO  {{ user.username }}</h3>
+            </div>
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="col-md-3">
+                        <span class="fa-stack fa-2x pull-left">
+                        <i class="fa fa-user text-info"></i></i>
+                        </span>
+                        <label for="oficina_text">OFICINA</label>
+                        <input type="text" id="oficina_text" value="" class="rounded"/>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="fa-stack fa-2x pull-left">
+                        <i class="fa fa-calendar text-info"></i></i>
+                        </span>
+                        <label for="fecha_inicio">FECHA INICIO</label>
+                        <input type="text" id="fecha_inicio" value="" class="datedropper rounded"/>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="fa-stack fa-2x pull-left">
+                        <i class="fa fa-calendar text-info"></i></i>
+                        </span>
+                        <label for="fecha_inicio">FECHA FINAL</label>
+                        <input type="text" id="fecha_final" value="" class="datedropper rounded"/>
+                    </div>
+                    <div class="col-md-1 btn-group">
+                        <a onclick="filtrar()" class="btn btn-success pull-left"> <i class="fa fa-search"></i> </a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="panel-body" id="div_content">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript" src="{% static "highcharts/js/highcharts.js" %}"></script> 
+<script type="text/javascript" src="{% static "datedropper/datedropper.min.js" %}"></script> 
+<script type="text/javascript" charset="utf-8">
+$(".datedropper").dateDropper({lang:'es', minYear: 2015});
+
+function getdata(oficina, fecha_inicio, fecha_final){
+    $.get("{% url "oficina_report" %}",{'oficina': oficina, 'fecha_inicio': fecha_inicio, 'fecha_final' : fecha_final} , function(data){
+        $("#div_content").html("");
+        $.each(data["content"], function(i, val){
+            var card_template = " <div class='col-md-4 panel wrapper'> <div class='wrapper'> <div class='clearfix m-b'> <a href='#' class='pull-left thumb m-r'><img  src='%imagen%' class='img-circle'/></a> <div class='clear'> <div class='h4 m-t-xs m-b-xs'>%usuario%</div> <hr /> <small class='h5 block m-b-xs'><i class='fa fa-usd'></i> COSTO : $%costo%</small> <small class='h5 block m-t-xs'><i class='fa fa-phone'></i> TOTAL LLAMADAS : %total_llamadas%</small> </div> </div> <div class='wrapper'> <div class='row'> <div class='col-xs-12 wrapper panel'> <div class='row'> <div class='col-xs-4'> <span class='fa-stack fa-2x pull-left m-r-sm' title='LLAMADAS SALIENTES'> <i class='fa fa-circle fa-stack-2x text-danger'></i> <i class='fa fa-phone fa-stack-1x text-white'></i> <span class='easypiechart pos-abt' data-percent='100' data-line-width='4' data-track-Color='#f5f5f5' data-scale-Color='false' data-size='50' data-line-cap='butt' data-animate='3000' data-target='#firers' data-update='5000'></span> </span> <a class='clear' href='#'> <span class='h1 block m-t-xs'><strong id='firers'>%llamadas_salientes%</strong></span> </a> </div> <div class='col-xs-4'> <span class='fa-stack fa-2x pull-left m-r-sm' title='LLAMADAS ENTRANTES'> <i class='fa fa-circle fa-stack-2x text-success'></i> <i class='fa fa-phone fa-stack-1x text-white'></i> <span class='easypiechart pos-abt' data-percent='100' data-line-width='4' data-track-Color='#f5f5f5' data-scale-Color='false' data-size='50' data-line-cap='butt' data-animate='3000' data-target='#firers' data-update='5000'></span> </span> <a class='clear' href='#'> <span class='h1 block m-t-xs'><strong id='firers'>%llamadas_entrantes%</strong></span> </a> </div> <div class='col-xs-4'> <span class='fa-stack fa-2x pull-left m-r-sm' title='LLAMDAS OPERADOR'> <i class='fa fa-circle fa-stack-2x text-info'></i> <i class='fa fa-phone fa-stack-1x text-white'></i> <span class='easypiechart pos-abt' data-percent='100' data-line-width='4' data-track-Color='#f5f5f5' data-scale-Color='false' data-size='50' data-line-cap='butt' data-animate='3000' data-target='#firers' data-update='5000'></span> </span> <a class='clear' href='#'> <span class='h1 block m-t-xs'><strong id='firers'>%llamadas_operador%</strong></span> </a> </div> </div> </div> <div class='col-xs-12 co-md-4'> <div id='char_oficina_%id%'></div> </div> </div> </div> </div> </div> ";
+            var total = parseInt(val["salientes"]) + parseInt(val["entrantes"]) + parseInt(val['operador']);
+            card_template = card_template.replace("%usuario%", val['oficina']);
+            card_template = card_template.replace("%llamadas_salientes%", val['salientes']);
+            card_template = card_template.replace("%llamadas_entrantes%", val['entrantes']);
+            card_template = card_template.replace("%llamadas_operador%", val['operador']);
+            card_template = card_template.replace("%total_llamadas%", total);
+            card_template = card_template.replace("%costo%", val['costo']);
+            //card_template = card_template.replace("%imagen%", val['fotografia']);
+            card_template = card_template.replace("%imagen%", '{% static 'images/avatar.jpg' %}');
+            card_template = card_template.replace("%id%", i);
+            $("#div_content").append(card_template);
+            Highcharts.setOptions({
+                colors: [ '#8ec165', '#fb6b5b','#4cc0c1']
+            });
+            $('#char_oficina_' + i).highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false
+                },
+                title: {
+                    text: 'LLAMADAS'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'LLAMADAS',
+                    data: [
+                        ['ENTRANTES',   val["entrantes"]],
+                        ['SALIENTES',   val["salientes"]],
+                        ['OPERADR',    val["operador"]],
+                    ]
+                }]
+            });
+        });
+    });      
+
+}
+function filtrar()
+{
+    var oficina = $("#oficina_text").val();
+    var fecha_inicio = $("#fecha_inicio").val();
+    var fecha_final = $("#fecha_final").val();
+    getdata(oficina, fecha_inicio, fecha_final);
+    return false;
+
+}
+filtrar();
+</script>
+{% endblock %}

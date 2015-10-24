@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "jquery-ui/jquery-ui.min.css" %}" type="text/css" >   
+<link rel="stylesheet" href="{% static "jquery-ui/jquery-ui.theme.min.css" %}" type="text/css" >   
+<link rel="stylesheet" href="{% static "JqGrid/css/ui.jqgrid.css" %}" type="text/css" >   
+{% endblock %}
+
+
+
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="{% url  'home_home'  %}"><i class="fa fa-home"></i> HOME</a></li>
+        <li class="active">LLAMADAS</li>
+    </ul>
+    {% if not alerta == None %}
+    <div class="alert alert-{{ alerta.tipo }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fa fa-ban-circle"></i>{{ alerta.data }}
+    </div> 
+    {% endif %}
+    <div class="m-b-md">
+        <small>{{ user.username|upper }}</small>
+    </div>
+    <section class="panel panel-default">
+    </section>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="jqGrid">
+                <table id="list47"></table>
+                <div id="plist48"> </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block jquery %}
+<script type="text/javascript" src="{% static "JqGrid/js/jquery-1.7.2.min.js" %}" charset="utf-8"> </script> 
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{% static "JqGrid/js/i18n/grid.locale-es.js" %}" charset="utf-8"> </script> 
+<script type="text/javascript" src="{% static "JqGrid/js/jquery.jqGrid.src.js" %}" charset="utf-8"> </script> 
+<script type="text/javascript" src="{% static "jquery-ui/jquery-ui.min.js" %}" charset="utf-8"> </script> 
+<script type="text/javascript" charset="utf-8">
+jQuery("#list47").jqGrid({
+    url: "{% url  "jqgrid_llamadas" %}",
+    datatype: 'json',
+    mtype: 'GET',
+    autowidth: true,
+    height: 'auto',
+    rowNum: 30,
+    rowList: [30,50,70],
+    colNames:['CODIGO DE LLAMADA', 'FUNCIONARIO', 'HORA', 'FECHA', 'DURACION', 'NUMERO DESTINO', 'INTERNO', 'COSTO', 'TIPO DE LLAMADA', 'CODIGO DE PROYECTO', 'HORARIO' ],
+    colModel:[
+    {name:'id',index:'id', width:50, align:'center'},
+    {name:'usuario',index:'usuario', width:130,align:'center', sortable:true, search:true},
+    {name:'hora',index:'hora', width:40, sortable:true,align:'center', sorttype:'time', sortable:true},
+    {name:'fecha',index:'fecha', width:40, sortable:true, sorttype:'date',align:'center',
+        searchoptions:{dataInit: function(item){
+            jQuery(item).datepicker({onClose: function(dateText, inst) { jQuery("#list47")[0].triggerToolbar(); }});
+        },attr:{title:'SELECCIONE UNA FECHA'}}, sortable:true},
+    {name:'duracion',index:'duracion', width:40,align:'center', sortable:true, sorttype:'time'},		
+    {name:'numero',index:'numero', width:50, align:'center'},
+    {name:'interno',index:'interno',align:'center', width:50, sortable:true},
+    {name:'costo',index:'costo', width:30, sortable:true,align:'center', sorttype:'float'},
+    {name:'tipo_llamada',index:'tipo_llamada',align:'center', width:60, sortable:true, stype:'select',
+        searchoptions:{ value: ":TODOS;SALIENTE:SALIENTE;ENTRANTE:ENTRANTE;OPERADOR:OPERADOR"}
+    },
+    {name:'codigo_proyecto',index:'codigo_proyecto',align:'center',align:'center', width:50, sortable:true},
+    {name:'horario',index:'horario', width:60,align:'center', sortable:true, stype: 'select',
+        searchoptions:{ value: ":TODOS;FUERA DE HORARIO:FUERA DE HORARIO;EN HORARIO:EN HORARIO"}
+    }	
+    ],
+    pager: "#plist48",
+    viewrecords: true,
+    sortname: 'fecha', 
+    sortorder: 'desc', 
+    caption: "LLAMADAS",
+    afterInsertRow: function(rowid,aData) {
+        if (aData.horario == 'EN HORARIO'){
+            jQuery('#list47').setCell(rowid, 'id', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'usuario', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'hora', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'fecha', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'duracion', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'numero', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'interno', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'costo', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'tipo_llamada', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'codigo_proyecto', '', { 'background-color': '#B9E6BB' });
+            jQuery('#list47').setCell(rowid, 'horario', '', { 'background-color': '#B9E6BB' });
+        }
+        else{
+            jQuery('#list47').setCell(rowid, 'id', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'usuario', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'hora', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'fecha', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'duracion', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'numero', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'interno', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'costo', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'tipo_llamada', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'codigo_proyecto', '', { 'background-color': '#F18F91' });
+            jQuery('#list47').setCell(rowid, 'horario', '', { 'background-color': '#F18F91' });
+        }
+    },
+    beforeRequest: function() {
+        responsive_jqgrid($(".jqGrid"));
+    }
+
+}).jqGrid("filterToolbar",{searchOnEnter : true}); 
+function responsive_jqgrid(jqgrid) {
+        jqgrid.find('.ui-jqgrid').addClass('clear-margin span12').css('width', '');
+        jqgrid.find('.ui-jqgrid-view').addClass('clear-margin span12').css('width', '');
+        jqgrid.find('.ui-jqgrid-view > div').eq(1).addClass('clear-margin span12').css('width', '').css('min-height', '0');
+        jqgrid.find('.ui-jqgrid-view > div').eq(2).addClass('clear-margin span12').css('width', '').css('min-height', '0');
+        jqgrid.find('.ui-jqgrid-sdiv').addClass('clear-margin span12').css('width', '');
+        jqgrid.find('.ui-jqgrid-pager').addClass('clear-margin span12').css('width', '');
+ }
+</script>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="{% url  'home_home'  %}"><i class="fa fa-home"></i> HOME</a></li>
+        <li class="active">HORARIOS</li>
+    </ul>
+    {% if not alerta == None %}
+    <div class="alert alert-{{ alerta.tipo }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fa fa-ban-circle"></i>{{ alerta.data }}
+    </div> 
+    {% endif %}
+    <div class="m-b-md">
+        <small>{{ user.username|upper }}</small>
+    </div>
+    <div class="col-md-12">
+        <section class="panel panel-default">
+            <header class="panel-heading font-bold">IMPORTAR DATOS</header>
+            <div class="panel-body">
+                <div class="row">
+                    <form class="bs-example form-horizontal" enctype="multipart/form-data" method="POST">{% csrf_token %}
+                        <div class="form-group">
+                            <!--<div class="line line-dashed line-lg pull-in"></div>-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="col-sm-2 control-label">Archivo</label>-->
+                                <!--<div class="col-sm-10">-->
+                                    <!--<div class="dropfile visible-lg">-->
+                                        <!--<small>Arrastrar y Soltar Aqui</small>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                            <input type="file" name="archivo" class="filestyle"> 
+                            <button type="submit" class="btn btn-primary">GUARDAR</button>
+                        </div>
+                    </form> 
+                </div>
+            </div>
+        </section>
+    </div>
+</section>
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static "js/app.plugin.js" %}"></script>
+<script src="{% static "js/file-input/bootstrap-filestyle.min.js" %}"></script>
+{% endblock %}

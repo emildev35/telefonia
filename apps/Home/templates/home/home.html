@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block titulo %}
+	HOME
+{% endblock titulo %}
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">SISTEMA DE TARIFACION</li>
+    </ul>
+    <div class="m-b-md">
+        <h3 class="m-b-none">SISTEMA TELEFONIO MOPS</h3>
+        <small>{{ user.username|upper }}</small>
+    </div>
+    <section class="panel panel-default">
+        <div class="row m-l-none m-r-none bg-light lter">
+            <div class="col-sm-6 col-md-3 padder-v b-r b-light">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-info"></i>
+                    <i class="fa fa-phone fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong>{{ total_llamadas }}</strong></span>
+                    <small class="text-muted text-uc">LLAMADAS</small>
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3 padder-v b-r b-light lt">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-warning"></i>
+                    <i class="fa fa-phone fa-stack-1x text-white"></i>
+                    <span class="easypiechart pos-abt" data-percent="100" data-line-width="4" data-track-Color="#fff" data-scale-Color="false" data-size="50" data-line-cap='butt' data-animate="2000" data-target="#bugs" data-update="3000"></span>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong id="bugs">{{ total_llamadas_entrantes }}</strong></span>
+                    <small class="text-muted text-uc">LLAMADAS ENTRANTES</small>
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3 padder-v b-r b-light">                     
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                    <i class="fa fa-phone fa-stack-1x text-white"></i>
+                    <span class="easypiechart pos-abt" data-percent="100" data-line-width="4" data-track-Color="#f5f5f5" data-scale-Color="false" data-size="50" data-line-cap='butt' data-animate="3000" data-target="#firers" data-update="5000"></span>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong id="firers">{{ total_llamadas_salientes }}</strong></span>
+                    <small class="text-muted text-uc">LLAMADAS SALIENTES</small>
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3 padder-v b-r b-light lt">
+                <span class="fa-stack fa-2x pull-left m-r-sm">
+                    <i class="fa fa-circle fa-stack-2x icon-muted"></i>
+                    <i class="fa fa-clock-o fa-stack-1x text-white"></i>
+                </span>
+                <a class="clear" href="#">
+                    <span class="h3 block m-t-xs"><strong>{{ total_llamadas_operador }}</strong></span>
+                    <small class="text-muted text-uc">LLAMADAS OPERADOR</small>
+                </a>
+            </div>
+        </div>
+    </section>
+    <div class="row">
+       <div class="col-md-12">
+          <div id="chars"> </div> 
+       </div> 
+    </div>
+    <div class="row">
+       <div class="col-md-12">
+          <div id="chars_oficina"> </div> 
+       </div> 
+    </div>
+    <div class="row">
+        <a href="{% url "top_pdf_report" %}" class="btn btn-primary pull-right">IMPRIMIR</a>
+    </div>
+</section>
+{% endblock body %}
+{% block js %}
+<script type="text/javascript" src="{% static "highcharts/js/highcharts.js" %}"></script> 
+<script type="text/javascript" charset="utf-8">
+var options = {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: "USUARIO CON MAYOR NUMERO DE LLAMADAS"
+    },
+    subtitle: {
+        text: ''
+    },
+    plotOptions: {
+        column: {
+            depth: 0
+        },
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: false
+            },
+            showInLegend: true
+        }
+    },
+    xAxis: {
+        categories:[],
+        labels: {
+            style: {
+               // fontSize:'12px'
+            },
+            overflow : "justify"
+        }
+    },
+     yAxis: {
+            min: 0,
+            title: {
+                text: 'NUMERO DE LLAMADAS',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+    tooltip: {
+        formatter :function () {
+            return '<b>' + this.name.replace(/,/g,'<br/>') + '</b><br/>' +
+                'NUMERO DE LLAMADAS '  + ': ' + this.y + '<br/>';
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        floating : true,
+        userHTML : true,
+        labelFormatter: function () {
+            return this.name.replace(/,/g,'<br/>');
+        },
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+    },
+    series: [{
+        type : null,
+        name : null,
+        data: []
+    }]
+};
+function to_barra(){
+    $.getJSON("{% url "full_bar_usuario" %}", function(result){
+        options.chart.type ="column";
+        options.series= [];
+        options.xAxis.categories = [];
+        options.legend.x = -40;
+        options.legend.y = 100;
+        options.tooltip.formatter = function () {
+            return '<b>' + this.x.replace(/,/g,'<br/>') + '</b><br/>' +
+                'NUMERO DE LLAMADAS '  + ': ' + this.y + '<br/>';
+        }
+        options.series.push({'name': 'SALIENTES' , 'data': []});
+        options.series.push({'name': 'ENTRANTES' , 'data':[]});
+        options.series.push({'name': 'OPERADOR' , 'data': []});
+
+        $.each(result["content"], function(i, field){
+                options.series[0].data.push(field[1]);
+                options.series[1].data.push(field[2]);
+                options.series[2].data.push(field[3]);
+                options.xAxis.categories.push(field[0]);
+        });
+        $('#chars').highcharts(options);
+        console.log(options);
+    });
+}
+function to_barra_oficina(){
+    $.getJSON("{% url "full_bar_oficina" %}", function(result){
+        options.chart.type ="column";
+        options.series= [];
+        options.title["text"] = "OFICINAS CON MAYOR NUMERO DE LLAMADAS";
+        options.series = [];
+        options.xAxis.categories = [];
+        options.legend.x = -40;
+        options.legend.y = 100;
+        options.tooltip.formatter = function () {
+            return '<b>' + this.x.replace(/,/g,'<br/>') + '</b><br/>' +
+                'NUMERO DE LLAMADAS '  + ': ' + this.y + '<br/>';
+        }
+        options.series.push({'name': 'SALIENTES' , 'data': []});
+        options.series.push({'name': 'ENTRANTES' , 'data':[]});
+        options.series.push({'name': 'OPERADOR' , 'data': []});
+
+        $.each(result["content"], function(i, field){
+                options.series[0].data.push(field[1]);
+                options.series[1].data.push(field[2]);
+                options.series[2].data.push(field[3]);
+                options.xAxis.categories.push(field[0]);
+        });
+        $('#chars_oficina').highcharts(options);
+    });
+}
+to_barra();
+to_barra_oficina();
+</script>
+{% endblock js %}

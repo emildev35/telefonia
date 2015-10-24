@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+
+    {% for notificacion in notificaciones %}
+        {{ notificacion.cuerpo }}
+    {% endfor %}
+
+{% endblock %}

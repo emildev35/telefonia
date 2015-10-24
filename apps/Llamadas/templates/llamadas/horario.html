@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block titulo %}
+HORARIO
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "jqwidgets/styles/jqx.base.css" %}" type="text/css">
+<link rel="stylesheet" href="{% static "jqwidgets/styles/jqx.bootstrap.css" %}" type="text/css">
+<link rel='stylesheet' type='text/css'href='{% static "TimePicki/css/timepicki.css" %}'/>
+{% endblock %}
+
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="{% url  'home_home'  %}"><i class="fa fa-home"></i> HOME</a></li>
+        <li class="active">HORARIOS</li>
+    </ul>
+    {% if not alerta == None %}
+    <div class="alert alert-{{ alerta.tipo }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fa fa-ban-circle"></i>{{ alerta.data }}
+    </div> 
+    {% endif %}
+    <div class="m-b-md">
+        <small>{{ user.username|upper }}</small>
+    </div>
+    <section class="panel panel-default">
+    </section>
+    <div class="row">
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <header class="panel-heading font-bold">HORARIO ACTUAL</header>
+                <div class="panel-body">
+                    <div class="container">
+                       <div class="col-md-6">
+                           <section class="panel panel-default">
+                               <header class="panel-heading bg-success lt no-border">
+                                   <div class="clearfix">
+                                       <a href="#" class="pull-left b-3x m-r">
+                                           <i class="fa fa-clock-o fa-3x"></i>
+                                       </a>
+                                       <div class="clear">
+                                           <div class="h3 m-t-xs m-b-xs text-white">
+                                               HORA DE INGRESO MAÑANA
+                                               <i class="fa fa-circle text-white pull-right text-xs m-t-sm"></i>
+                                           </div>
+                                       </div>                
+                                   </div>
+                               </header>
+                               <div class="list-group no-radius alt">
+                                   <a class="list-group-item" href="#">
+                                       <span class="badge bg-success"></span>
+                                       <h4>{{ horario.horaIngreso }}</h4>
+                                   </a>
+                               </div>
+                           </section>
+                       </div> 
+                       <div class="col-md-6">
+                           <section class="panel panel-default">
+                               <header class="panel-heading bg-danger lt no-border">
+                                   <div class="clearfix">
+                                       <a href="#" class="pull-left b-3x m-r">
+                                           <i class="fa fa-clock-o fa-3x"></i>
+                                       </a>
+                                       <div class="clear">
+                                           <div class="h3 m-t-xs m-b-xs text-white">
+                                               HORA DE SALIDA MAÑANA
+                                               <i class="fa fa-circle text-white pull-right text-xs m-t-sm"></i>
+                                           </div>
+                                       </div>                
+                                   </div>
+                               </header>
+                               <div class="list-group no-radius alt">
+                                   <a class="list-group-item" href="#">
+                                       <span class="badge bg-success"></span>
+                                       <h4>{{ horario.horaSalida }}</h4>
+                                   </a>
+                               </div>
+                           </section>
+                       </div> 
+                       <div class="col-md-6">
+                           <section class="panel panel-default">
+                               <header class="panel-heading bg-success lt no-border">
+                                   <div class="clearfix">
+                                       <a href="#" class="pull-left b-3x m-r">
+                                           <i class="fa fa-clock-o fa-3x"></i>
+                                       </a>
+                                       <div class="clear">
+                                           <div class="h3 m-t-xs m-b-xs text-white">
+                                               HORA DE INGRESO TARDE
+                                               <i class="fa fa-circle text-white pull-right text-xs m-t-sm"></i>
+                                           </div>
+                                       </div>                
+                                   </div>
+                               </header>
+                               <div class="list-group no-radius alt">
+                                   <a class="list-group-item" href="#">
+                                       <span class="badge bg-success"></span>
+                                       <h4>{{ horario.horaIngresoTarde }}</h4>
+                                   </a>
+                               </div>
+                           </section>
+                       </div> 
+                       <div class="col-md-6">
+                           <section class="panel panel-default">
+                               <header class="panel-heading bg-danger lt no-border">
+                                   <div class="clearfix">
+                                       <a href="#" class="pull-left b-3x m-r">
+                                           <i class="fa fa-clock-o fa-3x"></i>
+                                       </a>
+                                       <div class="clear">
+                                           <div class="h3 m-t-xs m-b-xs text-white">
+                                               HORA DE SALIDA TARDE
+                                               <i class="fa fa-circle text-white pull-right text-xs m-t-sm"></i>
+                                           </div>
+                                       </div>                
+                                   </div>
+                               </header>
+                               <div class="list-group no-radius alt">
+                                   <a class="list-group-item" href="#">
+                                       <span class="badge bg-success"></span>
+                                       <h4>{{ horario.horaSalidaTarde }}</h4>
+                                   </a>
+                               </div>
+                           </section>
+                       </div> 
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 a-r pull-right">
+                            <div class="btn-group btn-group-justified">
+                                <a href="#modal-horario" class="btn btn-primary" data-toggle="modal">CAMBIAR</a> 
+                            </div> 
+                        </div>
+                    </div>
+                </div>                  
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <header class="panel-heading font-bold">
+                    HORARIOS
+                </header> 
+                <div class="panel-body">
+                   <div id="jqxgrid"></div> 
+                </div>
+            </section>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block modal %}
+<div class="modal fade" id="modal-horario">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12 b-r-l">
+                        <h3 class="m-t-none m-b">CAMBIAR HORARIO</h3>
+                        <form role="form" method="POST" class="form-horizontal">{% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-md-6 control-label">HORA DE INGRESO (MAÑANA)</label>
+                                <div class="col-md-6">
+                                    <input type="time" name="horaIngreso"  required id="horaIngreso" class="form-control timepicker"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6 control-label">HORA DE INGRESO (TARDE)</label>
+                                <div class="col-md-6">
+                                    <input type="time" name="horaIngresoTarde" required id="horaIngreso" class="form-control timepicker_t"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6 control-label">JORNADA (HORAS:MINUTOS)</label>
+                                <div class="col-md-6">
+                                    <input type="time" name="jornada" id="horaIngreso" required class="form-control timepicker_time"/>
+                                </div>
+                            </div>
+                            <div class="checkbox m-t-lg">
+                                <button type="submit" class="btn btn-sm btn-success pull-right text-uc m-t-n-xs"><strong>CAMBIAR</strong></button>
+                            </div>                
+                        </form>
+                    </div>
+                </div>          
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcore.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcore.js" %}"> </script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.filter.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.sort.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdata.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxscrollbar.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxbuttons.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.grouping.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxmenu.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxmenu.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.selection.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdropdownlist.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxlistbox.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxpanel.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdatetimeinput.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdatetimeinput.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcheckbox.js" %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script src="{% static "TimePicki/js/timepicki.js" %}"></script>
+<script type="text/javascript" charset="utf-8">
+$('.timepicker').timepicki({start_time: ["08", "00", "AM"],step_size_minutes:30, min_hour_value: 7, max_hour_value: 9}); 
+$('.timepicker_t').timepicki({start_time: ["02", "00", "PM"],step_size_minutes:30, min_hour_value: 1, max_hour_value: 3}); 
+$('.timepicker_time').timepicki({show_meridian:false, start_time: ["04", "00"], step_size_minutes:30, min_hour_value: 3, max_hour_value: 5});
+var source =
+{
+    datatype: "json",
+    datafields: [
+    { name: 'hora_ingreso', type: 'time' },
+    { name: 'hora_salida', type: 'time' },
+    { name: 'hora_ingreso_tarde',type: 'time' },
+    { name: 'hora_salida_tarde', type: 'time' },
+    { name: 'estado', type: 'estado' },
+    ],
+    url: "{% url "jqxgrid_horarios" %}"
+};
+var dataAdapter = new $.jqx.dataAdapter(source); 
+$("#jqxgrid").jqxGrid(
+        {
+            width: '100%',
+            source: dataAdapter,
+            groupable: true,
+            filterable: true,
+            columns: [
+            { text: 'HORA INGRESO', datafield: 'hora_ingreso', width: '20%' },
+            { text: 'HORA SALIDA', datafield: 'hora_salida', width: '20%' },
+            { text: 'HORA INGRESO (TARDE)', datafield: 'hora_ingreso_tarde', width: '20%' },
+            { text: 'HORA SALIDA (TARDE)', datafield: 'hora_salida_tarde', width: '20%' },
+            { text: 'ESTADO', datafield: 'estado', width: '20%' },
+            ]
+
+        });
+</script> 
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block titulo %}
+   TARIFACION 
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "jqwidgets/styles/jqx.base.css" %}" type="text/css">
+<link rel="stylesheet" href="{% static "jqwidgets/styles/jqx.bootstrap.css" %}" type="text/css">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
+
+{% endblock %}
+
+
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="{% url  'home_home'  %}"><i class="fa fa-home"></i>Home</a></li>
+        <li class="active">TARIFAS</li>
+    </ul>
+    {% if not alerta == None %}
+    <div class="alert alert-{{ alerta.tipo }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fa fa-ban-circle"></i>{{ alerta.data }}
+    </div> 
+    {% endif %}
+    <div class="m-b-md">
+        <small>{{ user.username|upper }}</small>
+    </div>
+    <section class="panel panel-default">
+    </section>
+    <div class="row">
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <header class="panel-heading font-bold">HORARIO ACTUAL</header>
+                <div class="panel-body">
+                    <div class="row">
+                    {% for tarifa in tarifas %}
+                        <div class="col-md-6">
+                           <section class="panel panel-default">
+                               <header class="panel-heading bg-{% if tarifa.tipo == 'M' %}success{%else%}primary{% endif %} lt no-border">
+                                   <div class="clearfix">
+                                       <a href="#" class="pull-left b-3x m-r">
+                                           <i class="fa fa-usd fa-3x"></i>
+                                       </a>
+                                       <div class="clear">
+                                           <div class="h3 m-t-xs m-b-xs text-white">
+                                               <i class="fa fa-circle text-white pull-right text-xs m-t-sm"></i>
+                                           {%if tarifa.tipo == 'M'%}MOVIL {%else%}FIJO {% endif %}{% if tarifa.zona == 'N' %}NACIONAL{% else %}LOCAL{% endif %}
+                                           </div>
+                                       </div>                
+                                   </div>
+                               </header>
+                               <div class="list-group no-radius alt">
+                                   <a class="list-group-item" href="#">
+                                       <span class="badge bg-success"></span>
+                                       <h4>{{ tarifa.precio }}</h4>
+                                   </a>
+                           <a href="#modal-tarifa" onclick="changeTarifa('{{ tarifa.zona }}' , '{{ tarifa.tipo }}')" class="list-group-item btn btn-primary" data-toggle="modal">CAMBIAR</a>
+                               </div>
+                           </section>
+                    </div>
+                    {% endfor %}
+                </div>                  
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <header class="panel-heading font-bold">
+                   TARIFAS 
+                </header> 
+                <div class="panel-body">
+                   <div id="jqxgrid"></div> 
+                </div>
+            </section>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block modal %}
+<div class="modal fade" id="modal-tarifa">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12 b-r-l">
+                        <h3 class="m-t-none m-b">CAMBIAR TARIFA</h3>
+                        <form role="form" method="post">{% csrf_token %}
+                            <div class="form-group">
+                                <label>PRECIO MINUTO</label>
+                                <input type="number" value="01.00" class="form-control" placeholder="00.00" name="precio">
+                                <input type="hidden" id="tarifa_tipo" value="" name="tipo">
+                                <input type="hidden" id="tarifa_zona" value="" name="zona">
+                            </div>
+                            <div class="checkbox m-t-lg">
+                                <button type="submit" class="btn btn-sm btn-success pull-right text-uc m-t-n-xs"><strong>CAMBIAR</strong></button>
+                            </div>                
+                        </form>
+                    </div>
+                </div>          
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcore.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcore.js" %}"> </script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.filter.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.sort.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdata.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxscrollbar.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxbuttons.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.grouping.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxmenu.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxmenu.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.selection.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdropdownlist.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxlistbox.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxpanel.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdatetimeinput.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdatetimeinput.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcheckbox.js" %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+function changeTarifa(vzona, vtipo){
+    $("#tarifa_zona").val(vzona);
+    $("#tarifa_tipo").val(vtipo);
+}
+var source =
+{
+    datatype: "json",
+    datafields: [
+    { name: 'boolestado', type: 'bool' },
+    { name: 'datefecha_creacion', type: 'date' },
+    { name: 'decimaltarifa',type: 'decimal' },
+    { name: 'strtipo', type: 'string' },
+    { name: 'strregion', type: 'string' },
+    ],
+    url: "{% url "jqxgrid_tarifa" %}"
+};
+var dataAdapter = new $.jqx.dataAdapter(source); 
+$("#jqxgrid").jqxGrid(
+        {
+            width: '100%',
+            source: dataAdapter,
+            groupable: true,
+            filterable: true,
+            columns: [
+            { text: 'REGION', datafield: 'strcodigo', width: '20%' },
+            { text: 'TIPO', datafield: 'strtipo', width: '20%' },
+            { text: 'TARIFA', datafield: 'decimaltarifa', width: '20%' },
+            { text: 'ESTADO', datafield: 'boolestado', width: '20%' },
+            { text: 'FECHA CREACION', datafield: 'datefecha_creacion', width: '20%' },
+            ]
+
+        });
+</script> 
+{% endblock %}

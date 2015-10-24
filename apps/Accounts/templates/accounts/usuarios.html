@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="{% url  'home_home'  %}"><i class="fa fa-home"></i> HOME</a></li>
+        <li class="active">USUARIOS</li>
+    </ul>
+    <div class="m-b-md">
+        <small>{{ user.username|upper }}</small>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <header class="panel-heading font-bold">USUARIOS</header>
+                <div class="panel-body">
+                    <div class="wrapper">
+                        {% for usuario in usuarios_list %}
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="clearfix m-b">
+                                    <a href="#" class="pull-left thumb m-r">
+                                        <img src="{% static "images/avatar.jpg" %}" class="img-circle">
+                                    </a>
+                                    <div class="clear">
+                                        <div class="h2 m-t-xs m-b-xs">{{ usuario.last_name }} {{ usuario.first_name }}</div>
+                                        <div class="h4 m-t-xs m-b-xs">{{ usuario.username }} </div>
+                                        <small class="text-muted"><i class="fa fa-suitcase"></i> {{ usuario.cargo }}</small>
+                                    </div>                
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="panel wrapper">
+                                    <div class="row">
+                                        {% for codigo in usuario.codigos.all|dictsort:"fechaCreacion" %}
+                                        <div class="col-xs-12">
+                                            <a href="#">
+                                                <span class="m-b-xs h4 block">N° {{ codigo.id }}</span>
+                                                <div class="m-b-xs h4 block">
+                                                    <small class="text-mutFollowersed block">Fecha de Creacion : {{ codigo.fechaCreacion }}</small>
+                                                    <span class="fa fa-stack fa-1x pull-left m-r-sm">
+                                                        {% ifequal codigo.activo True %}
+                                                        <i class="fa fa-circle fa-stack-1x text-success"></i>
+                                                        <i class="fa fa-check-square-o fa-stack-1x"></i>
+                                                        {% else %}
+                                                        <i class="fa fa-circle fa-stack-1x text-danger"></i>
+                                                        <i class="fa fa-minus-square fa-stack-1x"></i>
+                                                        {% endifequal %}
+                                                    </span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div> 
+                            </div>
+                            <div class="col-md-2">
+                                <a href="{% url "accounts_detaill" usuario.id %}" class="btn btn-primary" >MODIFICAR</a> 
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

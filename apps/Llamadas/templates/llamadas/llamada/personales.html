@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block body %}
+<div class="row padder">
+    <div class="col-md-12">
+        <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+            <li><a href="{% url 'home_home'%}"><i class="fa fa-home"></i>HOME</a></li>
+            <li class="active"><a href="#"><i class="fa fa-phone"></i> MIS LLAMADAS</a></li>
+        </ul>
+    </div>
+</div>
+<div class="row padder">
+    <div class="col-md-6">
+        <strong class="h2 block pull-left">LISTA DE LLAMADAS</strong>
+    </div>
+    <div class="col-md-6">
+        <strong class="h2 pull-right">{{ user.username|upper }}</strong> 
+    </div>
+    <hr />
+</div>
+<hr />
+<div class="vbox m-r-xs">
+    <section class="scrollable padder comment-list block" id="page">
+        <div class="row">
+            <div class="col-sm-12">
+                {% include "llamadas/llamada/cardscroll.html" %}
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block modal %}
+<div class="modal fade" id="modal-llamada">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12 b-r-l">
+                        <h3 class="m-t-none m-b">REGISTRAR LLAMADA</h3>
+                        <div id="alerta">
+                            
+                        </div>
+                        <form role="form" method="POST" id="form-llamada" class="form">{% csrf_token %}
+                            <div class="form-group">
+                                <input type="hidden" name="id" id="id_registro" value="" />
+                                <label class="control-label">MOTIVO</label>
+                                <textarea  class="form-control" name="motivo" id="motivo" data-required="true" rows="6" data-minwords="10"></textarea>
+                            </div>
+                            <div class="checkbox m-t-lg">
+                                <button type="submit" class="btn btn-sm btn-success pull-right text-uc m-t-n-xs"><strong>GUARDAR</strong></button>
+                            </div>                
+                        </form>
+                    </div>
+                </div>          
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript" charset="utf-8" src="{% static "jquery-timeago/jquery.timeago.js" %}"> </script>
+<script type="text/javascript" charset="utf-8" src="{% static "jquery-timeago/locales/jquery.timeago.es.js" %}"> </script>
+<script type="text/javascript" charset="utf-8" src="{% static "jscroll/jquery.jscroll.js" %}"> </script>
+<script type="text/javascript" charset="utf-8">
+$("#page").jscroll(); 
+$(".timeago").timeago();
+function registro(id){
+    $("#id_registro").val(id);
+}
+$("#form-llamada").submit(function(e)
+{
+    var postData = $(this).serializeArray();
+    $.ajax(
+    {
+        url : "{% url 'llamadas_personales' %}",
+        type: "POST",
+        data : postData,
+        success:function(data, textStatus, jqXHR) 
+        {
+            console.log(data);
+            if(!data["mensaje"]){
+                $(location).attr("href",location.href);
+                console.log("sd");
+            }
+            else
+            {
+                var html_alert = " <div id='alerta' class='alert alert-danger'> <button type='button' class='close' data-dismiss='alert'>&times;</button> <i class='fa fa-ban-circle'></i>"+ data["mensaje"]+" </div>";
+                $("#alerta").html(html_alert);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) 
+        {
+        }
+    });
+    e.preventDefault();
+});
+</script>
+{% endblock %}
