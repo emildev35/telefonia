@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -11,6 +11,28 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.CreateModel(
+            name='Cdr',
+            fields=[
+                ('accid', models.BigIntegerField(serialize=False, primary_key=True)),
+                ('calldate', models.DateTimeField()),
+                ('clid', models.CharField(max_length=45)),
+                ('src', models.CharField(max_length=45)),
+                ('dst', models.CharField(max_length=45)),
+                ('dcontext', models.CharField(max_length=45)),
+                ('channel', models.CharField(max_length=45)),
+                ('dstchannel', models.CharField(max_length=45)),
+                ('lastapp', models.CharField(max_length=45)),
+                ('billsec', models.IntegerField(default=0)),
+                ('lastdata', models.CharField(max_length=45)),
+                ('duration', models.IntegerField(default=0)),
+                ('disposition', models.CharField(max_length=45)),
+                ('amaflags', models.IntegerField(default=0)),
+                ('accountcode', models.CharField(max_length=45)),
+                ('uniqueid', models.CharField(max_length=45)),
+                ('userfield', models.CharField(max_length=45)),
+            ],
+        ),
         migrations.CreateModel(
             name='DescripcionLlamada',
             fields=[
@@ -24,9 +46,9 @@ class Migration(migrations.Migration):
             name='Horario',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('horaIngreso', models.TimeField()),
-                ('horaIngresoTarde', models.TimeField()),
-                ('tiempoJornada', models.DurationField()),
+                ('hora_ingreso', models.TimeField()),
+                ('hora_ingreso_tarde', models.TimeField()),
+                ('tiempo_jornada', models.DurationField()),
                 ('activo', models.BooleanField(default=True)),
             ],
         ),
@@ -34,24 +56,24 @@ class Migration(migrations.Migration):
             name='Llamada',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('numeroInterno', models.IntegerField()),
+                ('numero_interno', models.IntegerField()),
                 ('numero', models.CharField(max_length=15)),
                 ('hora', models.TimeField()),
                 ('fecha', models.DateField()),
                 ('duracion', models.DurationField()),
                 ('costo', models.DecimalField(max_digits=5, decimal_places=2)),
-                ('tiempoEspera', models.DurationField(null=True, blank=True)),
-                ('tipoLlamada', models.CharField(max_length=1, choices=[(b'I', b'ENTRANTE'), (b'O', b'SALIENTE'), (b'E', b'OPERADOR')])),
-                ('codigoProyecto', models.ForeignKey(related_name='llamadas', to='Accounts.CodigoProyecto')),
+                ('tiempo_espera', models.DurationField(null=True, blank=True)),
+                ('codigo_usuario', models.ForeignKey(related_name='llamadas', to='Accounts.CodigoUsuario')),
                 ('horario', models.ForeignKey(related_name='llamadas', to='Llamadas.Horario')),
             ],
         ),
         migrations.CreateModel(
-            name='Region',
+            name='NumeroTelefonico',
             fields=[
-                ('id', models.IntegerField(serialize=False, primary_key=True)),
-                ('departamento', models.CharField(max_length=140)),
-                ('zona', models.CharField(max_length=150)),
+                ('codigo', models.CharField(max_length=11, serialize=False, primary_key=True)),
+                ('region', models.CharField(max_length=50)),
+                ('servicio', models.CharField(max_length=20)),
+                ('empresa', models.CharField(max_length=10)),
             ],
         ),
         migrations.CreateModel(
@@ -62,13 +84,20 @@ class Migration(migrations.Migration):
                 ('zona', models.CharField(max_length=1, choices=[(b'L', b'LOCAL'), (b'N', b'NACIONAL')])),
                 ('precio', models.DecimalField(max_digits=5, decimal_places=2)),
                 ('activo', models.BooleanField(default=True)),
-                ('fechaCreacion', models.DateTimeField(auto_now=True, null=True)),
+                ('fecha_creacion', models.DateTimeField(auto_now=True, null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TipoLLamada',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('descripcion', models.CharField(max_length=50)),
             ],
         ),
         migrations.AddField(
             model_name='llamada',
-            name='region',
-            field=models.ForeignKey(related_name='llamadas', to='Llamadas.Region'),
+            name='tipo_llamada',
+            field=models.ForeignKey(related_name='llamadas', to='Llamadas.TipoLLamada'),
         ),
         migrations.AddField(
             model_name='descripcionllamada',
@@ -77,6 +106,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='llamada',
-            unique_together=set([('fecha', 'hora', 'codigoProyecto', 'numeroInterno')]),
+            unique_together=set([('fecha', 'hora', 'codigo_usuario', 'numero_interno')]),
         ),
     ]

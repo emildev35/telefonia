@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 from django.conf import settings
 
 
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('estado', models.BooleanField(default=True)),
                 ('monto', models.DecimalField(null=True, max_digits=5, decimal_places=2, blank=True)),
                 ('configuracion', models.ForeignKey(related_name='cuentas', to='Reportes.ConfiguracionCuenta')),
-                ('usuario', models.ForeignKey(related_name='cuentas', to=settings.AUTH_USER_MODEL)),
+                ('funcionario', models.ForeignKey(related_name='cuentas', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cvsFile', models.FileField(upload_to=b'cvs')),
                 ('fechaCreacion', models.DateTimeField(auto_now=True)),
-                ('usuario', models.ForeignKey(related_name='uploads', to=settings.AUTH_USER_MODEL)),
+                ('funcionario', models.ForeignKey(related_name='uploads', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

@@ -1,6 +1,6 @@
 import datetime as dt
 from django.db import models
-from apps.Accounts.models import CodigoProyecto
+from apps.Accounts.models import CodigoUsuario
 from .tasks import registarLlamada
 
 
@@ -13,7 +13,7 @@ class Tarifa(models.Model):
     zona = models.CharField(max_length=1, choices=ZONE_TYPE)
     precio = models.DecimalField(max_digits=5, decimal_places=2)
     activo = models.BooleanField(default=True)
-    fechaCreacion = models.DateTimeField(auto_now=True, null=True, blank=True)
+    fecha_creacion = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         Tarifa.objects.filter(tipo=self.tipo).filter(zona=self.zona).update(activo=False)
@@ -24,37 +24,20 @@ class Tarifa(models.Model):
         return data
 
 
-class Region(models.Model):
-    id = models.IntegerField(primary_key=True)
-    departamento = models.CharField(max_length=140)
-    zona = models.CharField(max_length=150)
-
-    def __unicode__(self):
-        data = '%s-%s' % \
-            (
-                self.departamento,
-                self.zona,
-            )
-        return data
-
-
-CALL_TYPE = (('I', 'ENTRANTE'), ('O', 'SALIENTE'), ('E', 'OPERADOR'))
+class TipoLLamada(models.Model):
+    descripcion = models.CharField(max_length=50)
 
 
 class Llamada(models.Model):
-    numeroInterno = models.IntegerField()
-    region = models.ForeignKey('Region', related_name='llamadas')
+    numero_interno = models.IntegerField()
     numero = models.CharField(max_length=15)
     hora = models.TimeField(null=False, blank=False)
     fecha = models.DateField(null=False, blank=False)
     duracion = models.DurationField()
-    codigoProyecto = models.ForeignKey(
-        CodigoProyecto,
-        related_name='llamadas'
-    )
+    codigo_usuario = models.ForeignKey(CodigoUsuario, related_name='llamadas')
     costo = models.DecimalField(max_digits=5, decimal_places=2)
-    tiempoEspera = models.DurationField(blank=True, null=True)
-    tipoLlamada = models.CharField(max_length=1, choices=CALL_TYPE)
+    tiempo_espera = models.DurationField(blank=True, null=True)
+    tipo_llamada = models.ForeignKey('TipoLLamada', related_name='llamadas')
     horario = models.ForeignKey('Horario', related_name='llamadas')
 
     def style_horario(self):
@@ -100,7 +83,7 @@ class Llamada(models.Model):
         )
 
     class Meta:
-        unique_together = ('fecha', 'hora', 'codigoProyecto', 'numeroInterno')
+        unique_together = ('fecha', 'hora', 'codigo_usuario', 'numero_interno')
 
 DESCRIPTION_TYPE = (('L', 'LABORAL'), ('P', 'PERSONAL'))
 
@@ -124,15 +107,15 @@ class DescripcionLlamada(models.Model):
 
 
 class Horario(models.Model):
-    horaIngreso = models.TimeField()
-    horaIngresoTarde = models.TimeField()
-    tiempoJornada = models.DurationField()
+    hora_ingreso = models.TimeField()
+    hora_ingreso_tarde = models.TimeField()
+    tiempo_jornada = models.DurationField()
     activo = models.BooleanField(default=True)
 
     def __unicode__(self):
         data = '%s-%s' % (
-            self.horaIngreso.strftime('%H:%M:%S'),
-            self.horaIngresoTarde.strftime('%H:%M:%S')
+            self.hora_ingreso.strftime('%H:%M:%S'),
+            self.hora_ingresoTarde.strftime('%H:%M:%S')
         )
         return data
 
@@ -151,3 +134,35 @@ class Horario(models.Model):
             dt.date(1, 1, 1,),
             self.horaIngresoTarde
         ) + self.tiempoJornada).time()
+
+
+class NumeroTelefonico(models.Model):
+    codigo = models.CharField(max_length=11, primary_key=True)
+    region = models.CharField(max_length=50)
+    servicio = models.CharField(max_length=20)
+    empresa = models.CharField(max_length=10)
+
+
+class Cdr(models.Model):
+    accid = models.AutoField(primary_key=True)
+    calldate = models.DateTimeField()
+    clid = models.CharField(max_length=45)
+    src = models.CharField(max_length=45)
+    dst = models.CharField(max_length=45)
+    dcontext = models.CharField(max_length=45)
+    channel = models.CharField(max_length=45)
+    dstchannel = models.CharField(max_length=45)
+    lastapp = models.CharField(max_length=45)
+    lastdata = models.CharField(max_length=45)
+    duration = models.IntegerField(default=0)
+    billsec = models.IntegerField(default=0)
+    lastdata = models.CharField(max_length=45)
+    duration = models.IntegerField(default=0)
+    disposition = models.CharField(max_length=45)
+    amaflags = models.IntegerField(default=0)
+    accountcode = models.CharField(max_length=45)
+    uniqueid = models.CharField(max_length=45)
+    userfield = models.CharField(max_length=45)
+
+    class Meta:
+        db_table = 'cdr'

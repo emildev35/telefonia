@@ -1,34 +1,10 @@
 from django.contrib import admin
 from .models import Llamada, Horario
-from .models import Region, Tarifa
+from .models import Tarifa
 
 
 @admin.register(Llamada)
 class LlamadaAdmin(admin.ModelAdmin):
-    list_display = (
-        'fecha',
-        'hora',
-        'numeroInterno',
-        'codigoProyecto',
-        'tipoLlamada',
-        'duracion',
-        'numero',
-        'style_horario',
-        'costo'
-    )
-    list_filter = (
-        'fecha',
-        'tipoLlamada'
-    )
-    search_fields = [
-        'numeroInterno',
-        'codigoProyecto__id',
-        'numero'
-    ]
-
-
-@admin.register(Region)
-class RegionAdmin(admin.ModelAdmin):
     pass
 
 
@@ -39,4 +15,4 @@ class HorarioAdmin(admin.ModelAdmin):
 
 @admin.register(Tarifa)
 class TarifaAdmin(admin.ModelAdmin):
-    list_display = ('tipo', 'zona', 'precio', 'activo')
+    pass

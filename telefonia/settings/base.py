@@ -26,6 +26,7 @@ OTHER_APPS = (
     'django_ajax',
     'widget_tweaks',
     'drealtime',
+    'rest_framework',
 )
 LOCAL_APPS = (
     'apps.Home',
@@ -76,7 +77,7 @@ ROOT_URLCONF = 'telefonia.urls'
 
 WSGI_APPLICATION = 'telefonia.wsgi.application'
 
-AUTH_USER_MODEL = 'Accounts.Usuario'
+AUTH_USER_MODEL = 'Personal.Funcionario'
 
 LANGUAGE_CODE = 'es-bo'
 

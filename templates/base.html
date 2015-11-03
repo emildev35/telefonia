@@ -160,20 +160,20 @@
   <script src="{% static "js/calendar/demo.js" %}"></script>
   <script src="{% static "js/sortable/jquery.sortable.js" %}"></script>
   <script src="{% static "django_ajax/js/jquery.ajax.min.js" %}"></script>
-    {% ishout_js %}
-    <script type="text/javascript" charset="utf-8">
-        ishout.on('notificaciones', function(data){
-            var cuerpo = '<div class="list-group list-group-alt animated fadeInRight"> <a href="#" class="media list-group-item">';
-                cuerpo + = '<span class="media-body block m-b-none">';
-                cuerpo+= data.msg + '<br>';
-                cuerpo += '</span>';
-                cuerpo += ' </a>';
-                cuerpo +=' </div>';
-            $("#cuerpo_notificaciones").html(cuerpo);
+    <!--{% ishout_js %}-->
+    <!--<script type="text/javascript" charset="utf-8">-->
+        <!--ishout.on('notificaciones', function(data){-->
+            <!--var cuerpo = '<div class="list-group list-group-alt animated fadeInRight"> <a href="#" class="media list-group-item">';-->
+                <!--cuerpo += '<span class="media-body block m-b-none">';-->
+                <!--cuerpo += data.msg + '<br>';-->
+                <!--cuerpo += '</span>';-->
+                <!--cuerpo += ' </a>';-->
+                <!--cuerpo +=' </div>';-->
+            <!--$("#cuerpo_notificaciones").html(cuerpo);-->
 
-        });
-        ishout.init();
-    </script>
+        <!--});-->
+        <!--ishout.init();-->
+    <!--</script>-->
   {% block js %}
   {% endblock %}
 </body>

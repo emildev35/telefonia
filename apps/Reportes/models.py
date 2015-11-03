@@ -1,5 +1,5 @@
 from django.db import models
-from apps.Accounts.models import Usuario
+from apps.Personal.models import Funcionario
 
 
 class ConfiguracionCuenta(models.Model):
@@ -17,15 +17,10 @@ class ConfiguracionCuenta(models.Model):
 
 
 class Cuenta(models.Model):
-    usuario = models.ForeignKey(Usuario, related_name='cuentas')
+    funcionario = models.ForeignKey(Funcionario, related_name='cuentas')
     mes = models.IntegerField()
     gestion = models.IntegerField()
-    montoDisponible = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
+    montoDisponible = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     estado = models.BooleanField(default=True)
     monto = models.DecimalField(
         max_digits=5,
@@ -33,10 +28,7 @@ class Cuenta(models.Model):
         null=True,
         blank=True
     )
-    configuracion = models.ForeignKey(
-        'ConfiguracionCuenta',
-        related_name='cuentas'
-        )
+    configuracion = models.ForeignKey('ConfiguracionCuenta', related_name='cuentas')
 
     def save(self, *args, **kwargs):
         self.objects.filter(estado=True).update(estado=False)
@@ -49,7 +41,7 @@ class Cuenta(models.Model):
 class UploadCvs(models.Model):
     cvsFile = models.FileField(upload_to='cvs')
     fechaCreacion = models.DateTimeField(auto_now=True)
-    usuario = models.ForeignKey(Usuario, related_name='uploads')
+    funcionario = models.ForeignKey(Funcionario, related_name='uploads')
 
     def __unicode__(self):
         return '%s - %s' % \

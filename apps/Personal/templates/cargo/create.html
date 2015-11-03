@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block titulo %}
+CREACION DE AREAS
+{% endblock titulo %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "jqwidgets/styles/jqx.base.css" %}" type="text/css">
+<link rel="stylesheet" href="{% static "jqwidgets/styles/jqx.bootstrap.css" %}" type="text/css">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
+
+{% endblock %}
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">SISTEMA DE TARIFACION</li>
+    </ul>
+    <section class="panel panel-default">
+        <header class="panel-heading font-bold">REGISTRO DE CARGOS</header>
+        <div class="panel-body">
+            <form method="post" role="form" action="">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="form-group col-md-5">
+                        <label for="descripcion">DESCRIPCION</label>
+                        {{ form.descripcion | add_class:"form-control"}}
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" class="btn btn-primary">GUARDAR</button>
+            </form>
+        </div>
+    </section>
+    <section class="panel panel-default">
+        <header class="panel-heading font-bold">CARGOS REGISTRADOS</header>
+        <div class="panel-body">
+            <div id="jqxgrid"></div>
+        </div>
+    </section>
+</section>
+{% endblock body %}
+{% block js %}
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/globalization/globalize.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/globalization/globalize.culture.es-BO.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcore.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcore.js" %}"> </script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.filter.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.sort.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdata.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxscrollbar.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxbuttons.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.grouping.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxmenu.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxmenu.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.selection.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdropdownlist.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxlistbox.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxpanel.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdatetimeinput.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdatetimeinput.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcheckbox.js" %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+function csrfSafeMethod(method){
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+function deleteRow(row, datafield, value){
+    var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', row);
+    token = {
+    };
+    $.ajaxSetup({        
+        beforeSend: function(xhr, settings){
+            if(!csrfSafeMethod(settings.type) && !this.crossDomain){
+                xhr.setRequestHeader('X-CSRFToken','{{ csrf_token }}')
+            }
+        }}
+    );
+    $.ajax({
+        url: "/personal/cargo/" + dataRecord.id,
+        type: 'DELETE',
+        datatype : 'json',
+        success: function(data){
+            console.log(data);
+        }
+    });
+}
+
+var source =
+{
+datatype: "json",
+          datafields: [
+          { name: 'id', type: 'integer' },
+          { name: 'descripcion', type: 'string' },
+          { name: 'fechaRegistro', type: 'date' },
+          ],
+          url: "{% url "personal_cargo_list" %}?format=json" 
+};
+
+var deleteAction = function(row, columnfield, value){
+    return "<button class='btn btn-danger' onClick='deleteRow(" + row + ")'>Eliminar</button>";
+}
+
+var updateAction = function(row, datafield, value){
+    return "<button class='btn btn-primary'>Eliminar</button>";
+}
+
+var dataAdapter = new $.jqx.dataAdapter(source); 
+$("#jqxgrid").jqxGrid(
+        {
+            width: '100%',
+            source: dataAdapter,
+            groupable: true,
+            filterable: true,
+            columns: [
+            { text: 'DESCRIPCION', datafield: 'id', width: '7%' },
+            { text: 'DESCRIPCION', datafield: 'descripcion', width: '60%' },
+            { text: 'FECHA REGRISTRO', datafield: 'fechaRegistro', width: '13%', cellsformat: 'dd/MM/yyyy'},
+            { text: 'ELIMINAR',width: '10%', cellsrenderer: deleteAction},
+            { text: 'MODIFICAR', width: '10%', cellsrenderer: updateAction},
+            ]
+});
+
+</script> 
+{% endblock js %}

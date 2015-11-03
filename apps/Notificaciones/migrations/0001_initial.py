@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
-from django.conf import settings
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -19,7 +17,6 @@ class Migration(migrations.Migration):
                 ('cuerpo', models.TextField(null=True)),
                 ('tipo', models.CharField(max_length=15, null=True, blank=True)),
                 ('visto', models.BooleanField(default=False)),
-                ('usuario', models.ForeignKey(related_name='alertas', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
