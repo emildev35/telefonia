@@ -30,7 +30,7 @@ def reporte_usuario(request):
         fecha_final = str(dt.date.today())
     else:
         fecha_final = [x for x in fecha_final.split('/')]
-        fecha_final = fecha_final[2] + '-' + fecha_final[0]+ '-' + fecha_final[1]
+        fecha_final = fecha_final[2] + '-' + fecha_final[0] + '-' + fecha_final[1]
 
     resultado = wh_procedure(
         'card_complete_usuario',

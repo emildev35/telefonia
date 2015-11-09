@@ -8,10 +8,12 @@ from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.core.exceptions import ObjectDoesNotExist
 from django_ajax.response import JSONResponse
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from apps.utils.db import procedure
 from apps.Notificaciones.tasks import insertarAlerta, calcularCuenta
-from .models import Tarifa, Horario, DescripcionLlamada, CodigoProyecto
-from .models import Llamada, Region
+from .models import Tarifa, Horario, DescripcionLlamada, Llamada, Cdr
+from .serializers import CdrSerializer
+from apps.Accounts.models import CodigoUsuario
 
 
 class HomeView(TemplateView):
@@ -20,10 +22,12 @@ class HomeView(TemplateView):
 
 class TarifaView(View):
     template_name = 'llamadas/tarifa/home.html'
+
     @method_decorator(permission_required('llamadas.add_tarifa'))
     def get(self, request):
         tarifas = Tarifa.objects.filter(activo=True).order_by('tipo', 'zona')
         return render(request, self.template_name, {'tarifas': tarifas})
+
     @method_decorator(permission_required('llamadas.add_tarifa'))
     def post(self, request):
         tipo = request.POST['tipo']
@@ -36,15 +40,17 @@ class TarifaView(View):
         return render(request, self.template_name, {
             'tarifas': tarifas,
             'alerta': alerta
-            })
+        })
 
 
 class HorarioView(View):
     template_name = 'llamadas/horario.html'
+
     @method_decorator(permission_required('llamadas.add_horario'))
     def get(self, request):
         horario = Horario.objects.filter(activo=True)[0]
         return render(request, self.template_name, {'horario': horario})
+
     @method_decorator(permission_required('llamadas.add_horario'))
     def post(self, request):
         ingreso = [
@@ -61,33 +67,35 @@ class HorarioView(View):
         ]
         jornada = dt.timedelta(hours=int(jornada[0]), minutes=int(jornada[1]))
         ingreso = dt.time(int(ingreso[0]), int(ingreso[1]))
-        ingresoTarde = dt.time((int(ingresoTarde[0])+12), int(ingresoTarde[1]))
+        ingresoTarde = dt.time((int(ingresoTarde[0]) + 12), int(ingresoTarde[1]))
         horario = Horario.objects.create(
             horaIngreso=ingreso,
             horaIngresoTarde=ingresoTarde,
             tiempoJornada=jornada
-            )
+        )
         if horario:
             alerta = {
                 'tipo': 'success',
                 'data': 'OPERACION REALIZADA CON EXITO'
-                }
+            }
         else:
             alerta = {
                 'tipo': 'danger',
                 'data': 'OCURIO UN ERROR'
-                }
+            }
         return render(request, self.template_name, {
             'horario': horario,
             'alerta': alerta
-            })
+        })
 
 
 class ImportarDatosView(View):
     template_name = 'llamadas/import_data.html'
+
     @method_decorator(permission_required('llamadas.add_llamada'))
     def get(self, request):
         return render(request, self.template_name, {})
+
     @method_decorator(permission_required('llamadas.add_llamada'))
     def post(self, request):
         cvsfile = request.FILES['archivo']
@@ -123,9 +131,7 @@ class ImportarDatosView(View):
                 if codigo_proyecto == '':
                     codigo_proyecto = 2
                 try:
-                    codigoProyecto = CodigoProyecto.objects.get(
-                        id=int(codigo_proyecto)
-                    )
+                    codigoProyecto = CodigoUsuario.objects.get(id=int(codigo_proyecto))
                     if tipo_llamada == 'entrante':
                         tipo_llamada = 'I'
                         numero = numero_origen
@@ -165,9 +171,8 @@ class ImportarDatosView(View):
                         except ObjectDoesNotExist:
                             tarifa = decimal.Decimal(0.00)
 
-                    region = Region.objects.get(id=1003)
                     horario = Horario.objects.filter(activo=True)[0]
-                    costo = decimal.Decimal(duracion.seconds/60.0000)*tarifa
+                    costo = decimal.Decimal(duracion.seconds / 60.0000) * tarifa
                     # Insercion de la Llamada
                     llamada = Llamada()
                     llamada.hora = hora
@@ -177,7 +182,6 @@ class ImportarDatosView(View):
                     llamada.numero = numero
                     llamada.duracion = duracion
                     llamada.tiempoEspera = tiempoEspera
-                    llamada.region = region
                     llamada.horario = horario
                     llamada.tipoLlamada = tipo_llamada
                     llamada.costo = costo
@@ -210,6 +214,7 @@ class ImportarDatosView(View):
 
 class LlamadasView(View):
     template_name = 'llamadas/llamada/home.html'
+
     @method_decorator(permission_required('llamadas.add_llamada'))
     def get(self, request):
         return render(request, self.template_name, {})
@@ -217,6 +222,7 @@ class LlamadasView(View):
 
 class LlamadasUsuarioView(View):
     template_name = 'llamadas/llamada/usuario.html'
+
     @method_decorator(permission_required('llamadas.add_llamada'))
     def get(self, request):
         return render(request, self.template_name, {})
@@ -224,6 +230,7 @@ class LlamadasUsuarioView(View):
 
 class LlamadasOficinaView(View):
     template_name = 'llamadas/llamada/oficina.html'
+
     @method_decorator(permission_required('llamadas.add_llamada'))
     def get(self, request):
         return render(request, self.template_name, {})
@@ -257,9 +264,7 @@ class LlamadasPersonalesView(View):
 
     def post(self, request):
         if request.POST['motivo'] == '':
-            return JSONResponse(
-                {'mensaje': 'El campo de motivo no debe estar vacio!'}
-                )
+            return JSONResponse({'mensaje': 'El campo de motivo no debe estar vacio!'})
         else:
             ds_llamada = DescripcionLlamada.objects.get(id=request.POST['id'])
             if ds_llamada:
@@ -271,3 +276,24 @@ class LlamadasPersonalesView(View):
             else:
                 return JSONResponse({'mensaje': 'ERROR DEL SISTEMA'})
             return JSONResponse({})
+
+
+class LlamadaDetalle(View):
+    template_name = 'llamadas/detalle_llamada.html'
+
+    def get(self, request, *args, **kwargs):
+        llamada = Llamada.objects.get(id=kwargs['pk'])
+        return render(request, self.template_name, {'llamada': llamada})
+
+
+class CdrMixin(object):
+    queryset = Cdr.objects.all()
+    serializer_class = CdrSerializer
+
+
+class CdrList(CdrMixin, ListAPIView):
+    pass
+
+
+class CdrDetail(CdrMixin, RetrieveAPIView):
+    pass

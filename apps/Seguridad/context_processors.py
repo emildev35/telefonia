@@ -6,11 +6,8 @@ def menus(request):
     data = {}
     if request.user == AnonymousUser():
         return {}
-    elif request.user.is_superuser:
-        data = Menu.objects.filter(superusuario=True).filter(padre=None)
     else:
-        data = Menu.objects.filter(superusuario=False).filter(padre=None)
-
+        data = Menu.objects.filter(funcionario=request.user, padre=None)
     return {'menu_list': getmenu(data)}
 
 
@@ -18,8 +15,8 @@ def getmenu(data):
     response = []
     for menu in data:
         dicmenu = {}
-        dicmenu['nombre'] = menu.nombre
-        dicmenu['url'] = menu.direccion
+        dicmenu['nombre'] = menu.descripcion
+        dicmenu['url'] = menu.url
         dicmenu['icon'] = menu.icon
         dicmenu['color'] = menu.color
         if menu.hijos.all() is None:

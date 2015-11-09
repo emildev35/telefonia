@@ -1,7 +1,7 @@
 import datetime as dt
 from django.db import models
-from apps.Accounts.models import CodigoUsuario
-from .tasks import registarLlamada
+from apps.Accounts.models import CodigoUsuario, Extension
+# from .tasks import registarLlamada
 
 
 TYPE = (('F', 'FIJO'), ('M', 'MOVIL'))
@@ -27,10 +27,13 @@ class Tarifa(models.Model):
 class TipoLLamada(models.Model):
     descripcion = models.CharField(max_length=50)
 
+    def __unicode__(self):
+        return self.descripcion
+
 
 class Llamada(models.Model):
     numero_interno = models.IntegerField()
-    numero = models.CharField(max_length=15)
+    numero = models.ForeignKey('NumeroTelefonico', related_name='llamadas')
     hora = models.TimeField(null=False, blank=False)
     fecha = models.DateField(null=False, blank=False)
     duracion = models.DurationField()
@@ -43,16 +46,16 @@ class Llamada(models.Model):
     def style_horario(self):
         color = '#FF0000'
         msg = 'Fuera de Horario'
-        hora_ing_am = self.horario.horaIngreso
+        hora_ing_am = self.horario.hora_ingreso
         hora_sal_am = (dt.datetime.combine(
             dt.date(1, 1, 1,),
-            self.horario.horaIngreso
-        ) + self.horario.tiempoJornada).time()
-        hora_ing_pm = self.horario.horaIngresoTarde
+            self.horario.hora_ingreso
+        ) + self.horario.tiempo_jornada).time()
+        hora_ing_pm = self.horario.hora_ingreso_tarde
         hora_sal_pm = (dt.datetime.combine(
             dt.date(1, 1, 1,),
-            self.horario.horaIngresoTarde
-        ) + self.horario.tiempoJornada).time()
+            self.horario.hora_ingreso_tarde
+        ) + self.horario.tiempo_jornada).time()
         if self.hora > hora_ing_am and self.hora < hora_sal_am:
             color = '#80FF00'
             msg = 'En Horario'
@@ -72,7 +75,7 @@ class Llamada(models.Model):
                 self.fecha,
                 self.hora,
                 self.duracion,
-                self.codigoProyecto.usuario.username
+                self.codigo_usuario.funcionario.username
             )
         return data
 
@@ -83,7 +86,7 @@ class Llamada(models.Model):
         )
 
     class Meta:
-        unique_together = ('fecha', 'hora', 'codigo_usuario', 'numero_interno')
+        unique_together = ('fecha', 'hora', 'codigo_usuario', 'numero_interno', 'numero')
 
 DESCRIPTION_TYPE = (('L', 'LABORAL'), ('P', 'PERSONAL'))
 
@@ -102,7 +105,7 @@ class DescripcionLlamada(models.Model):
         return self.nombre
 
     def save(self, *args, **kwargs):
-        registarLlamada.apply_async(args=(self,), countdown = 60 * 10)
+        # registarLlamada.apply_async(args=(self,), countdown = 60 * 10)
         super(DescripcionLlamada, self).save(*args, **kwargs)
 
 
@@ -115,7 +118,7 @@ class Horario(models.Model):
     def __unicode__(self):
         data = '%s-%s' % (
             self.hora_ingreso.strftime('%H:%M:%S'),
-            self.hora_ingresoTarde.strftime('%H:%M:%S')
+            self.hora_ingreso_tarde.strftime('%H:%M:%S')
         )
         return data
 
@@ -126,29 +129,34 @@ class Horario(models.Model):
     def horaSalida(self):
         return (dt.datetime.combine(
             dt.date(1, 1, 1,),
-            self.horaIngreso
-        ) + self.tiempoJornada).time()
+            self.hora_ingreso
+        ) + self.tiempo_jornada).time()
 
     def horaSalidaTarde(self):
         return (dt.datetime.combine(
             dt.date(1, 1, 1,),
-            self.horaIngresoTarde
-        ) + self.tiempoJornada).time()
+            self.hora_ingreso_tarde
+        ) + self.tiempo_jornada).time()
 
 
 class NumeroTelefonico(models.Model):
-    codigo = models.CharField(max_length=11, primary_key=True)
-    region = models.CharField(max_length=50)
-    servicio = models.CharField(max_length=20)
-    empresa = models.CharField(max_length=10)
+    numero = models.CharField(max_length=11, primary_key=True)
+    departamento = models.CharField(max_length=50)
+    zona = models.CharField(max_length=50, default='')
+    area_servicio = models.CharField(max_length=50, default='')
+    empresa = models.CharField(max_length=50, default='')
+    servicio = models.CharField(max_length=30, default='')
+
+    def __unicode__(self):
+        return self.numero
 
 
 class Cdr(models.Model):
     accid = models.AutoField(primary_key=True)
     calldate = models.DateTimeField()
     clid = models.CharField(max_length=45)
-    src = models.CharField(max_length=45)
-    dst = models.CharField(max_length=45)
+    src = models.ForeignKey(Extension, related_name='llamadas_pbx', db_column='src')
+    dst = models.ForeignKey(Extension, related_name='llamadas_res_pbx', db_column='dst')
     dcontext = models.CharField(max_length=45)
     channel = models.CharField(max_length=45)
     dstchannel = models.CharField(max_length=45)

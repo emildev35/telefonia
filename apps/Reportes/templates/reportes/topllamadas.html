@@ -4,7 +4,7 @@
 {% block layout_style %}
     <style type="text/css">
         @page {
-            size: {{ pagesize|default:"A4" }};
+            size: {{ pagesize|default:"LETTER" }};
             margin-left: 2.5cm;
             margin-right: 2.5cm;
             margin-top: 2.5cm;
@@ -61,17 +61,17 @@
                 padding: 3px 0;
             }
             td:last-child { padding-bottom: 0; }
-        .text-left { text-align: left; }
-        .text-right { text-align: right; }
+        .text-left { text-align: left;  font-size:1.2em;}
+        .text-right { text-align: right; font-size:1.2em;}
         .bottom-10 { margin-bottom: 10px; bottom:0px; position:fixed;}
         .bottom-20 { 
             position: relative;
-            margin-top: -180px; /* negative value of footer height */
-            height: 180px;
+            margin-top: -10px; /* negative value of footer height */
+            height: 30px;
             clear:both;
         }
         .header { color: #7f7f7f; }
-        .header p { font-size: 13px; line-height: 1.5em; }
+        .header p { font-size: 11px; line-height: 1.2em; }
         .header-link { font-weight: bold; text-decoration: none; color: #4F81BD; font-size: 14px; }
         .logo { margin-bottom: 30px; margin-left: -25px; }
         .logo img { zoom: 60%; margin-right:80%;margin-left:80%;}
@@ -113,7 +113,6 @@
             <p>{{ today|date:"DATETIME_FORMAT" }}</p>
         </div>
         <hr/>
-
            <p><strong>Reporte de Llamadas</strong></p>
         <hr/>
         <div class="main">
@@ -144,13 +143,11 @@
                 </thead>
                 <tbody>
                 {% for top_usuario in top_usuarios %}
-                  <tr>
+                    <tr style="font-size:0.7em;">
                         <td class="text-left">{{ top_usuario.usuario }}</td>
                         <td class="text-right">{{ top_usuario.entrantes }}</td>
                         <td class="text-right">{{ top_usuario.salientes }}</td>
                         <td class="text-right">{{ top_usuario.operador }}</td>
-
-
                     </tr>
                 {% endfor %}
                 </tbody>

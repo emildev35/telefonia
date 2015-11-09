@@ -13,19 +13,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CodigoUsuario',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('numero', models.CharField(unique=True, max_length=6)),
+                ('id', models.CharField(max_length=6, unique=True, serialize=False, primary_key=True)),
                 ('fecha_registro', models.DateTimeField(auto_now=True)),
                 ('fecha_baja', models.DateTimeField(null=True, blank=True)),
+                ('activo', models.BooleanField(default=True)),
             ],
         ),
         migrations.CreateModel(
             name='Extension',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('numero', models.CharField(unique=True, max_length=6)),
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
                 ('fecha_registro', models.DateTimeField(auto_now=True)),
                 ('fecha_baja', models.DateTimeField(null=True, blank=True)),
+                ('activo', models.BooleanField(default=True)),
             ],
         ),
     ]

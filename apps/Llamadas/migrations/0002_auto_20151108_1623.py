@@ -12,8 +12,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='cdr',
-            name='accid',
-            field=models.AutoField(serialize=False, primary_key=True),
+            model_name='llamada',
+            name='numero',
+            field=models.ForeignKey(related_name='llamadas', to='Llamadas.NumeroTelefonico'),
         ),
     ]

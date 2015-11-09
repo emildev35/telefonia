@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Llamada, Horario
-from .models import Tarifa
+from .models import Tarifa, TipoLLamada
 
 
 @admin.register(Llamada)
@@ -15,4 +15,9 @@ class HorarioAdmin(admin.ModelAdmin):
 
 @admin.register(Tarifa)
 class TarifaAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(TipoLLamada)
+class TipoLLamadaAdmin(admin.ModelAdmin):
     pass

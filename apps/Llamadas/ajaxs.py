@@ -13,7 +13,7 @@ def jqgrid_llamadas(request, *kwargs):
         'interno',
         'costo',
         'tipo_llamada',
-        'codigo_proyecto',
+        'codigo_usuario',
         'horario'
         ])
 

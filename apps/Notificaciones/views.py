@@ -2,7 +2,7 @@ from django_ajax.decorators import ajax
 from drealtime import iShoutClient
 from django.views.generic import View
 from django.shortcuts import render
-from apps.Accounts.models import Usuario
+from apps.Personal.models import Funcionario
 from .models import Alerta
 
 

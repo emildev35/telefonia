@@ -21,13 +21,10 @@ class Area(models.Model):
 
 
 class Funcionario(AbstractUser):
-    apaterno = models.CharField(max_length=50)
-    amaterno = models.CharField(max_length=50)
-    nombres = models.CharField(max_length=50)
     fecha_nacimiento = models.DateTimeField(blank=True, null=True)
-    ci = models.CharField(max_length=9, blank=True, null=True)
-    ip = models.GenericIPAddressField(blank=True, null=True)
-    fecha_modificacion = models.DateTimeField(auto_now=True)
-    fotografia = models.ImageField()
+    ci = models.CharField(max_length=10, blank=True, null=True)
+    ip = models.GenericIPAddressField()
+    fecha_modificacion = models.DateTimeField(auto_now=True, null=True, blank=True)
+    fotografia = models.ImageField(null=True, blank=True)
     area = models.ForeignKey('Area', related_name='funcionarios')
     cargo = models.ForeignKey('Cargo', related_name='funcionarios')

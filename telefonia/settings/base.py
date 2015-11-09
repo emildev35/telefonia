@@ -27,6 +27,7 @@ OTHER_APPS = (
     'widget_tweaks',
     'drealtime',
     'rest_framework',
+    'bootstrap3',
 )
 LOCAL_APPS = (
     'apps.Home',
@@ -35,6 +36,7 @@ LOCAL_APPS = (
     'apps.Reportes',
     'apps.Notificaciones',
     'apps.Personal',
+    'apps.Seguridad',
 )
 
 INSTALLED_APPS = DJANGO_APPS + OTHER_APPS + LOCAL_APPS
@@ -66,7 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
-                'apps.Accounts.context_processors.menus',
+                'apps.Seguridad.context_processors.menus',
             ],
         },
     },

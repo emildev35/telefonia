@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Cdr',
             fields=[
-                ('accid', models.BigIntegerField(serialize=False, primary_key=True)),
+                ('accid', models.AutoField(serialize=False, primary_key=True)),
                 ('calldate', models.DateTimeField()),
                 ('clid', models.CharField(max_length=45)),
                 ('src', models.CharField(max_length=45)),
@@ -32,6 +32,9 @@ class Migration(migrations.Migration):
                 ('uniqueid', models.CharField(max_length=45)),
                 ('userfield', models.CharField(max_length=45)),
             ],
+            options={
+                'db_table': 'cdr',
+            },
         ),
         migrations.CreateModel(
             name='DescripcionLlamada',
@@ -70,10 +73,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NumeroTelefonico',
             fields=[
-                ('codigo', models.CharField(max_length=11, serialize=False, primary_key=True)),
-                ('region', models.CharField(max_length=50)),
-                ('servicio', models.CharField(max_length=20)),
-                ('empresa', models.CharField(max_length=10)),
+                ('numero', models.CharField(max_length=11, serialize=False, primary_key=True)),
+                ('departamento', models.CharField(max_length=50)),
+                ('zona', models.CharField(default=b'', max_length=50)),
+                ('area_servicio', models.CharField(default=b'', max_length=50)),
+                ('empresa', models.CharField(default=b'', max_length=50)),
+                ('servicio', models.CharField(default=b'', max_length=30)),
             ],
         ),
         migrations.CreateModel(
@@ -106,6 +111,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='llamada',
-            unique_together=set([('fecha', 'hora', 'codigo_usuario', 'numero_interno')]),
+            unique_together=set([('fecha', 'hora', 'codigo_usuario', 'numero_interno', 'numero')]),
         ),
     ]

@@ -41,7 +41,7 @@ def UpdateUsers():
             i['Usuario'] = generatenick(formatutf8(
                 formatutf8(i['Nombre'])),
                 nickexistentes
-                )
+            )
             nickexistentes.append(i['Usuario'])
 
     for Funcionario in Funcionarios:
@@ -54,7 +54,7 @@ def UpdateUsers():
                 try:
                     usuario = Usuario.objects.get(
                         username=formatutf8(Funcionario['Usuario'])
-                        )
+                    )
                 except Usuario.DoesNotExist:
                     usuario = None
 
@@ -64,7 +64,7 @@ def UpdateUsers():
                         formatutf8(Funcionario['Usuario']),
                         Funcionario['Mail'],
                         Funcionario['Pin']
-                        )
+                    )
                     usuario.unidad = unidad
                     usuario.ip = Funcionario['Ip']
                     if not fullname[1] is None:

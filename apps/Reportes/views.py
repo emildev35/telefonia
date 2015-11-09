@@ -4,7 +4,7 @@ from django.utils.timezone import now as tznow
 from django.contrib.auth.decorators import permission_required
 from apps.utils.db import full_complex_procedure
 from telefonia.settings.production import STATICFILES_DIRS
-from apps.Accounts.models import Usuario
+from apps.Personal.models import Funcionario
 from apps.Llamadas.models import Llamada
 import datetime
 
@@ -13,7 +13,7 @@ import datetime
 def pdfUsuario(request):
     imagen_path = STATICFILES_DIRS[0] + '/logos/logomopsv.png'
     imagen_bol_path = STATICFILES_DIRS[0] + '/logos/logobolivia.png'
-    data = Usuario.objects.all()
+    data = Funcionario.objects.all()
     with open(imagen_path, 'rb') as img:
         imagen_path = b64encode(img.read())
     with open(imagen_bol_path, 'rb') as img:
@@ -50,9 +50,9 @@ def pdfTopLlamadas(request):
     print top_usuario
     print top_oficina
     c_llamadas = Llamada.objects.count()
-    c_llamadas_entrantes = Llamada.objects.filter(tipoLlamada='I').count()
-    c_llamadas_salientes = Llamada.objects.filter(tipoLlamada='O').count()
-    c_llamadas_operador = Llamada.objects.filter(tipoLlamada='E').count()
+    c_llamadas_entrantes = Llamada.objects.filter(tipo_llamada_id=1).count()
+    c_llamadas_salientes = Llamada.objects.filter(tipo_llamada_id=2).count()
+    c_llamadas_operador = Llamada.objects.filter(tipo_llamada_id=3).count()
     with open(imagen_path, 'rb') as img:
         imagen_path = b64encode(img.read())
     with open(imagen_bol_path, 'rb') as img:

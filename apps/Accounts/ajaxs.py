@@ -1,11 +1,11 @@
 import random
 from django_ajax.decorators import ajax
-from .models import CodigoProyecto
+from .models import CodigoUsuario
 
 
 @ajax
 def generarCodigo(request):
-    codigos = CodigoProyecto.objects.values_list('id').all()
+    codigos = CodigoUsuario.objects.values_list('id').all()
     data = [x[0] for x in codigos]
     while True:
         new_code = random.randint(100000, 999999)

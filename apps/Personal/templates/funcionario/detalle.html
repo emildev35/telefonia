@@ -4,7 +4,7 @@
 <section class="scrollable padder">
     <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
         <li><a href="{% url  'home_home'  %}"><i class="fa fa-home"></i> HOME</a></li>
-        <li><a href="{% url "accounts_list" %}"><i class="fa fa-users"></i> USUARIOS</a></li>
+        <li><a href="{% url "personal_home" %}"><i class="fa fa-users"></i> USUARIOS</a></li>
         <li class="active"><i class="fa fa-user"></i> {{ usuario.username|upper }}</a></li>
     </ul>
     <div class="m-b-md">
@@ -26,7 +26,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-md-8">
                                 <table class="table table-striped m-b-none" data-ride="datatables">
                                     <tr>
                                         <div class="h1 m-t-xs m-b-xs">{{ usuario.last_name }} {{ usuario.first_name }}</div>
@@ -35,13 +35,14 @@
                                         <div class="h3 m-t-xs m-b-xs">{{ usuario.username }} </div>
                                     </tr>
                                     <tr>
-                                        <div class="h4 m-t-xs m-b-xs">{{ usuario.oficina }} </div>
+                                        <div class="h4 m-t-xs m-b-xs">{{ usuario.area.descripcion }} </div>
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-md-2 m-b-xs b-b-xs">
+                            <div class="col-md-4 m-b-xs b-b-xs">
                                 <div class="clearfix m-b">
                                     <a href="#modal-codigo" class="btn btn-primary" data-toggle="modal">CAMBIAR CODIGO</a>
+                                    <a href="#modal-extension" class="btn btn-primary" data-toggle="modal">CAMBIAR EXTENSION</a>
                                 </div>
                             </div>
                             <hr class="h3" />
@@ -113,13 +114,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for codigo in usuario.codigos.all|dictsort:"fechaCreacion" %}
+                                    {% for codigo in usuario.codigos.all|dictsort:"fecha_registro" %}
                                         <tr>
                                             <td>
                                                 {{ codigo.id }} 
                                             </td>
                                             <td>
-                                                {{ codigo.fechaCreacion }} 
+                                                {{ codigo.fecha_registro }} 
                                             </td>
                                             <td>
                                                 <span>
@@ -143,7 +144,7 @@
         </div>
         <div class="col-md-12">
             <section class="panel panel-default">
-                <header class="panel-heading font-bold"> <div class="h6 m-t-xs m-b-xs"><i class="fa fa-edit fa-1x"></i> CUENTAS</div> </header>
+                <header class="panel-heading font-bold"> <div class="h6 m-t-xs m-b-xs"><i class="fa fa-edit fa-1x"></i> EXTENSIONES</div> </header>
                 <div class="panel-body">
                     <div class="wrapper">
                         <div class="row">
@@ -152,26 +153,32 @@
                                 <table class="table table-striped m-b-none">
                                     <thead>
                                         <tr>
-                                            <td width="40%"><strong>MES</strong></td> 
-                                            <td width="40%"><strong>GESTION</strong></td> 
-                                            <td width="20%"><strong>GASTO</strong></td> 
+                                            <td width="40%"><strong>NUMERO DE EXTENSION</strong></td> 
+                                            <td width="40%"><strong>FECHA DE CREACION</strong></td> 
+                                            <td width="20%"><strong>ESTADO</strong></td> 
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for cuenta in usuario.cuentas.all|dictsort:"gestion"|dictsort:"mes" %}
+                                    {% for extension in usuario.extensiones.all|dictsort:"fecha_registro" %}
                                         <tr>
                                             <td>
-                                                {{ codigo.id }} 
+                                                {{ extension.id }} 
                                             </td>
                                             <td>
-                                                {{ codigo.fechaCreacion }} 
+                                                {{ extension.fecha_registro }} 
                                             </td>
                                             <td>
                                                 <span>
+                                                {% if extension.activo %}
+                                                    <a href="#" class="active" data-toggle="class"><i class="fa fa-check text-success text-active"></i><i class="fa fa-times text-danger text"></i></a>
+                                                {% else %}
+                                                    <a href="#" class="active" data-toggle="class"><i class="fa fa-check text-danger text-active"></i><i class="fa fa-times text-danger text"></i></a>
+                                                </span>
+                                                {% endif %}
                                             </td>
                                         </tr>
                                     {% empty %}
-                                    <tr><td></td><td>No existen elemento que Mostart</td><td></td></tr>
+                                    <tr><td></td><td>No existen elemento que Mostrar</td><td></td></tr>
                                     {% endfor %} 
                                     </tbody>
                                 </table>
@@ -196,6 +203,7 @@
                     <div class="col-sm-12 b-r-l">
                         <h3 class="m-t-none m-b">GENERAR CODIGO</h3>
                         <form role="form" method="POST" class="form-horizontal">{% csrf_token %}
+                            <input type="hidden" name="type" id="type" value="cod" />
                             <div class="form-group">
                                 <label class="col-md-6 control-label">NUEVO CODIGO</label>
                                 <div class="col-md-6">
@@ -205,6 +213,31 @@
                             </div>
                             <div class="checkbox m-t-lg">
                                 <a onclick="generarCodigo()" class="btn btn-sm btn-info pull-right text-uc m-t-n-xs"><strong>GENERAR</strong></a>
+                                <button type="submit" class="btn btn-sm btn-success pull-right text-uc m-t-n-xs"><strong>GUARDAR</strong></button>
+                            </div>                
+                        </form>
+                    </div>
+                </div>          
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-extension">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12 b-r-l">
+                        <h3 class="m-t-none m-b">REGISTRO DE EXTENSION</h3>
+                        <form role="form" method="POST" class="form-horizontal">{% csrf_token %}
+                            <input type="hidden" name="type" id="type" value="ext" />
+                            <div class="form-group">
+                                <label class="col-md-6 control-label">NUMERO DE LA EXTENSION</label>
+                                <div class="col-md-6">
+                                    <input type="text" name="codigo" required id="codigo" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="checkbox m-t-lg">
                                 <button type="submit" class="btn btn-sm btn-success pull-right text-uc m-t-n-xs"><strong>GUARDAR</strong></button>
                             </div>                
                         </form>

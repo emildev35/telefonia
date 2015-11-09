@@ -7,8 +7,6 @@
 <link rel="stylesheet" href="{% static "JqGrid/css/ui.jqgrid.css" %}" type="text/css" >   
 {% endblock %}
 
-
-
 {% block body %}
 <section class="scrollable padder">
     <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
@@ -21,11 +19,6 @@
         <i class="fa fa-ban-circle"></i>{{ alerta.data }}
     </div> 
     {% endif %}
-    <div class="m-b-md">
-        <small>{{ user.username|upper }}</small>
-    </div>
-    <section class="panel panel-default">
-    </section>
     <div class="row">
         <div class="col-md-12">
             <div class="jqGrid">
@@ -51,8 +44,8 @@ jQuery("#list47").jqGrid({
     mtype: 'GET',
     autowidth: true,
     height: 'auto',
-    rowNum: 30,
-    rowList: [30,50,70],
+    rowNum: 20,
+    rowList: [20,30,50],
     colNames:['CODIGO DE LLAMADA', 'FUNCIONARIO', 'HORA', 'FECHA', 'DURACION', 'NUMERO DESTINO', 'INTERNO', 'COSTO', 'TIPO DE LLAMADA', 'CODIGO DE PROYECTO', 'HORARIO' ],
     colModel:[
     {name:'id',index:'id', width:50, align:'center'},
@@ -112,6 +105,7 @@ jQuery("#list47").jqGrid({
     }
 
 }).jqGrid("filterToolbar",{searchOnEnter : true}); 
+
 function responsive_jqgrid(jqgrid) {
         jqgrid.find('.ui-jqgrid').addClass('clear-margin span12').css('width', '');
         jqgrid.find('.ui-jqgrid-view').addClass('clear-margin span12').css('width', '');

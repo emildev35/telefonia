@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="{% url  'home_home'  %}"><i class="fa fa-home"></i> HOME</a></li>
+        <li><a href="{% url "personal_home" %}"><i class="fa fa-users"></i> USUARIOS</a></li>
+    </ul>
+<div class="row">
+    <div class="col-md-12">
+        <section class="panel panel-default">
+            <header class="panel-heading font-bold">
+                <div class="h6 m-t-xs m-b-xs"><i class="fa fa-user fa-1x"></i> INFORMACION PERSONAL</div> 
+            </header>
+            <div class="panel-body">
+                <div class="wrapper">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <div class="clearfix m-b">
+                                <a href="#" class="pull-right thumb m-r">
+                                    <img src="{% static "images/avatar.jpg" %}" class="img-circle">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <table class="table table-striped m-b-none" data-ride="datatables">
+                                <tr> <div class="h1 m-t-xs m-b-xs">
+                                        {{ llamada.codigo_usuario.funcionario.last_name }} {{ llamada.codigo_usuario.funcionario.first_name }}
+                                </div></tr>
+                                <tr> <div class="h4 m-t-xs m-b-xs">{{ llamada.codigo_usuario.funcionario.area.descripcion }} </div> </tr>
+                                <tr> <div class="h5 m-t-xs m-b-xs">{{ llamada.codigo_usuario.funcionario.cargo.descripcion }} </div> </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <section class="panel panel-default">
+                <header class="panel-heading font-bold">
+                    <div class="h6 m-t-xs m-b-xs"><i class="fa fa-user fa-1x"></i> INFORMACION LLAMADA</div> 
+                </header>
+                <div class="panel-body">
+                    <div class="wrapper">
+                            <table class="table table-striped m-b-none">
+                                <thead>
+                                    <tr> <td width="40%"></td> <td width="60%"></td> </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td> <i class="fa fa-clock fa-1x"></i> <small>Duracion</small> </td>
+                                    <td> {{ llamada.duracion }} </td>
+                                </tr>
+                                <tr>
+                                    <td> <i class="fa fa-envelope-o fa-1x"></i> <small>Costo</small> </td>
+                                    <td> {{ llamada.costo }} </td>
+                                </tr>
+                                <tr>
+                                    <td> <i class="fa fa-credit-card fa-1x"></i> Interno</td>
+                                    <td> {{ llamada.numero_interno }} </td>
+                                </tr>
+                                <tr>
+                                    <td> <i class="fa fa-calendar fa-1x"></i> <small>Tipo Llamada</small> </td>
+                                    <td> {{ llamada.tipo_llamada.descripcion }} </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="col-md-6">
+            <section class="panel panel-default">
+                <header class="panel-heading font-bold">
+                    <div class="h6 m-t-xs m-b-xs"><i class="fa fa-user fa-1x"></i> INFORMACION NUMERO</div> 
+                </header>
+                <div class="panel-body">
+                    <div class="wrapper">
+                            <table class="table table-striped m-b-none">
+                                <thead>
+                                    <tr> <td width="40%"></td> <td width="60%"></td> </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td> <i class="fa fa-clock fa-1x"></i> <small>Numero</small> </td>
+                                    <td> {{ llamada.numero.numero }} </td>
+                                </tr>
+                                <tr>
+                                    <td> <i class="fa fa-envelope-o fa-1x"></i> <small>Departamento</small> </td>
+                                    <td> {{ llamada.numero.departamento }} </td>
+                                </tr>
+                                <tr>
+                                    <td> <i class="fa fa-credit-card fa-1x"></i> Empresa</td>
+                                    <td> {{ llamada.numero.empresa }} </td>
+                                </tr>
+                                <tr>
+                                    <td> <i class="fa fa-calendar fa-1x"></i> <small>Servicio</small> </td>
+                                    <td> {{ llamada.numero.servicio }} </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+   </div>
+   <div class="row">
+       <div class="col-md-12 m-b-xs b-b-xs">
+           <div class="clearfix m-b">
+               <a href="#modal-codigo" class="btn btn-primary" data-toggle="modal">IMPRIMIR</a>
+           </div>
+       </div>
+   </div>
+</section>
+{% endblock %}

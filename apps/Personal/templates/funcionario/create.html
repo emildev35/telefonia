@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% load bootstrap3 %}
+
+{% block titulo %}
+CREACION DE AREAS
+{% endblock titulo %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "jqwidgets/styles/jqx.base.css" %}" type="text/css">
+<link rel="stylesheet" href="{% static "jqwidgets/styles/jqx.bootstrap.css" %}" type="text/css">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
+
+{% endblock %}
+{% block body %}
+<section class="scrollable padder">
+    <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+        <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">SISTEMA DE TARIFACION</li>
+    </ul>
+    <section class="panel panel-default">
+        <header class="panel-heading font-bold">REGISTRO DE FUNCIONARIOS</header>
+        <div class="panel-body">
+            <div clas="row">
+                <form method="post" role="form" class="form" action="">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='horizontal' horizontal_field_class='col-md-9' %}
+                </div>
+                <div class="row">
+                    {% bootstrap_form_errors form%}
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-primary">
+                    {% bootstrap_icon "start" %}GUARDAR</button>
+            </form>
+        </div>
+    </section>
+    <section class="panel panel-default">
+        <header class="panel-heading font-bold">CARGOS REGISTRADOS</header>
+        <div class="panel-body">
+            <div id="jqxgrid"></div>
+        </div>
+    </section>
+</section>
+{% endblock body %}
+{% block js %}
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/globalization/globalize.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/globalization/globalize.culture.es-BO.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcore.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcore.js" %}"> </script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.js" %}" ></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.filter.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.sort.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdata.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxscrollbar.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxbuttons.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.grouping.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxmenu.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxmenu.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxgrid.selection.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdropdownlist.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxlistbox.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxpanel.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdatetimeinput.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxdatetimeinput.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "jqwidgets/jqxcheckbox.js" %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+function csrfSafeMethod(method){
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+function deleteRow(row, datafield, value){
+    var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', row);
+    token = {
+    };
+    $.ajaxSetup({        
+        beforeSend: function(xhr, settings){
+            if(!csrfSafeMethod(settings.type) && !this.crossDomain){
+                xhr.setRequestHeader('X-CSRFToken','{{ csrf_token }}')
+            }
+        }}
+    );
+    $.ajax({
+        url: "/personal/cargo/" + dataRecord.id,
+        type: 'DELETE',
+        datatype : 'json',
+        success: function(data){
+            console.log(data);
+        }
+    });
+}
+
+var source =
+{
+datatype: "json",
+          datafields: [
+          { name: 'id', type: 'integer' },
+          { name: 'first_name', type: 'string' },
+          { name: 'last_name', type: 'string' },
+          { name: 'username', type: 'string' },
+          { name: 'fecha_nacimiento', type: 'date' },
+          { name: 'ci', type: 'string' },
+          { name: 'ip', type: 'string' },
+          { name: 'cargo', type: 'string' },
+          { name: 'area', type: 'string' },
+          { name: 'fotografia', type: 'date' },
+          ],
+          url: "{% url "personal_funcionario_list" %}?format=json" 
+};
+
+var dataAdapter = new $.jqx.dataAdapter(source); 
+$("#jqxgrid").jqxGrid(
+        {
+            width: '100%',
+            source: dataAdapter,
+            groupable: true,
+            filterable: true,
+            columns: [
+            { text: 'ID', datafield: 'id', width: '7%' },
+            { text: 'NOMBRES', datafield: 'first_name', width: '10%' },
+            { text: 'APELLIDOS', datafield: 'last_name', width: '15%' },
+            { text: 'USERNAME', datafield: 'username', width: '10%' },
+            { text: 'FECHA NACIMIENTO', datafield: 'fecha_nacimiento', width: '7%', cellsformat: 'dd/MM/yyyy'},
+            { text: 'C.I.', datafield: 'ci', width: '10%' },
+            { text: 'IP', datafield: 'ip', width: '10%' },
+            { text: 'CARGO', datafield: 'cargo', width: '20%' },
+            { text: 'AREA', datafield: 'area', width: '20%' },
+            ]
+});
+
+</script> 
+{% endblock js %}
